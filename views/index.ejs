@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= title %></title>
+    <script src="/javascripts/he.js"></script>
+    <script src="/javascripts/htmlParser.js"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script>
+      var parse = function (str) {
+        var result = ''
+        try {
+          HTMLParser(he.unescape(str, {strict: true}), {
+            start: function (tag, attrs, unary) {
+              if (tag === 'script' || tag === 'style' || tag === 'link' || tag === 'frame' || tag === 'iframe' || tag === 'img') return
+              result += '<' + tag
+//              for (var i = 0, len = attrs.length; i < len; i++) {
+//                result += ' ' + attrs[i].name + '="' + attrs[i].escaped + '"'
+//              }
+              result += (unary ? '/' : '') + '>'
+            },
+            end: function (tag) {
+              result += '<' + tag + '>'
+            },
+            chars: function (text) {
+              result += text
+            },
+            comment: function (text) {
+              result += '<!--' + text + '-->'
+            }
+          })
+          return result
+        } catch (e) {
+          console.log(e)
+        } finally {
+        }
+      }
+    </script>
+</head>
+<body>
+<h1><%= title %></h1>
+<p>WelCome to <%= title %></p>
+<textarea name="name" id="txt" cols="30" rows="10"><p>sks<img src="null" alt="" onerror="alert(1)"></p><button onclick="alert('攻击我')">攻击我</button></textarea>
+<button type="button" name="button" id="btn">Comment</button>
+<button type="button" name="button" id="get">getComment</button>
+<script>
+  var btn = document.querySelector('#btn')
+  var get = document.querySelector('#get')
+  var txt = document.querySelector('#txt')
+  btn.addEventListener('click', function () {
+    var xhr = new XMLHttpRequest()
+    var url = '/comment?comment=' + txt.value
+    xhr.open('GET', url, true)
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          console.log(xhr)
+        } else {
+          console.log('err')
+        }
+      }
+    }
+    xhr.send()
+  })
+  get.addEventListener('click', function () {
+    var xhr = new XMLHttpRequest()
+    var url = '/getComment'
+    console.log(url)
+    xhr.open('GET', url, true)
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        // 解码的过程和配对的过程
+        if (xhr.status === 200) {
+          var com = parse(JSON.parse(xhr.response).comment)
+          var txt = document.createElement('div')
+          txt.innerHTML = com
+          document.body.appendChild(txt)
+        } else {
+          console.log('err')
+        }
+      }
+    }
+    xhr.send()
+  })
+</script>
+</body>
+</html>
