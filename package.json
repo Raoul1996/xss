@@ -7,10 +7,10 @@
   },
   "dependencies": {
     "body-parser": "~1.17.1",
-    "cookie-parser": "~1.4.3",
+    "cookie-parser": "~1.4.7",
     "debug": "~2.6.3",
     "ejs": "^2.5.7",
-    "express": "~4.15.2",
+    "express": "~4.21.1",
     "he": "^1.1.1",
     "jade": "~1.11.0",
     "morgan": "~1.8.1",
